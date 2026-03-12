@@ -9,72 +9,97 @@ const nameInput = document.getElementById('nameInput');
 const joinBtn = document.getElementById('joinBtn');
 const joinError = document.getElementById('joinError');
 const statusEl = document.getElementById('status');
-const modeEl = document.getElementById('mode');
-const taskEl = document.getElementById('task');
-const answerInput = document.getElementById('answerInput');
-const sendBtn = document.getElementById('sendBtn');
-const sentState = document.getElementById('sentState');
+const categoryEl = document.getElementById('category');
+const questionEl = document.getElementById('question');
+const timerEl = document.getElementById('timer');
+const answersEl = document.getElementById('answers');
+const resultEl = document.getElementById('result');
+const answerButtons = Array.from(document.querySelectorAll('.answer-btn'));
 
 let roomCode = (params.get('room') || '').toUpperCase();
+let timerInterval = null;
+
 if (roomCode) roomInput.value = roomCode;
+
+function startTimer(seconds) {
+  clearInterval(timerInterval);
+  let left = seconds;
+  timerEl.textContent = `Осталось: ${left} сек`;
+  timerInterval = setInterval(() => {
+    left -= 1;
+    timerEl.textContent = `Осталось: ${Math.max(0, left)} сек`;
+    if (left <= 0) clearInterval(timerInterval);
+  }, 1000);
+}
 
 joinBtn.addEventListener('click', () => {
   roomCode = roomInput.value.trim().toUpperCase();
   const nickname = nameInput.value.trim();
 
   if (!roomCode || !nickname) {
-    joinError.textContent = 'Enter room code and nickname.';
+    joinError.textContent = 'Введите код комнаты и ник.';
     return;
   }
 
   socket.emit('mobile:join-room', { roomCode, nickname });
 });
 
-sendBtn.addEventListener('click', () => {
-  const value = answerInput.value.trim();
-  if (!value || !roomCode) return;
-
-  socket.emit('mobile:submit-answer', { roomCode, value });
-  answerInput.value = '';
-  sentState.textContent = 'Answer sent ✅';
-  sendBtn.disabled = true;
+answerButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const answerIndex = Number(button.dataset.index);
+    socket.emit('answer', { roomCode, answerIndex });
+    resultEl.textContent = `Ответ ${button.textContent} отправлен ✅`;
+    answerButtons.forEach((btn) => {
+      btn.disabled = true;
+    });
+  });
 });
 
 socket.on('join:error', ({ message }) => {
   joinError.textContent = message;
 });
 
-socket.on('join:success', ({ roomCode: joinedCode, player, state, currentMode }) => {
+socket.on('join:success', ({ roomCode: joinedCode, player }) => {
   roomCode = joinedCode;
   joinPanel.classList.add('hidden');
   gamePanel.classList.remove('hidden');
-  statusEl.textContent = `Joined ${roomCode} as ${player.nickname}`;
-  modeEl.textContent = state === 'lobby' ? 'Waiting for game start...' : `Current mode: ${currentMode || ''}`;
+  statusEl.textContent = `Комната ${roomCode}, игрок: ${player.nickname}`;
+  questionEl.textContent = 'Ждём выбор категории на ТВ...';
   joinError.textContent = '';
 });
 
-socket.on('round:started', ({ mode, prompt }) => {
-  modeEl.textContent = `Mode: ${mode.replace('_', ' ')}`;
-  taskEl.textContent = mode === 'truth_or_dare' ? `Truth: ${prompt.truth}\nDare: ${prompt.dare}` : prompt;
-  sentState.textContent = '';
-  sendBtn.disabled = false;
-  answerInput.placeholder = mode === 'voting' ? 'Vote by typing a nickname' : 'Type your answer';
+socket.on('new-question', ({ category, question, options, timer }) => {
+  categoryEl.textContent = `Категория: ${category}`;
+  questionEl.textContent = question;
+  resultEl.textContent = '';
+  answersEl.classList.remove('hidden');
+
+  answerButtons.forEach((btn, idx) => {
+    btn.disabled = false;
+    btn.textContent = `${String.fromCharCode(65 + idx)}: ${options[idx]}`;
+  });
+
+  startTimer(timer || 20);
 });
 
-socket.on('round:results', ({ mode }) => {
-  sentState.textContent = mode === 'voting' ? 'Votes counted. Next round soon...' : 'Round finished. Next round soon...';
-  sendBtn.disabled = true;
-});
+socket.on('show-result', ({ correctIndex, scores }) => {
+  clearInterval(timerInterval);
+  timerEl.textContent = 'Раунд завершён';
+  resultEl.textContent = `Правильный ответ: ${String.fromCharCode(65 + correctIndex)}`;
 
-socket.on('room:update', ({ state }) => {
-  if (state === 'lobby') {
-    modeEl.textContent = 'Waiting for game start...';
-    taskEl.textContent = '';
+  const myScore = scores[socket.id];
+  if (typeof myScore === 'number') {
+    resultEl.textContent += ` | Ваш счёт: ${myScore}`;
   }
+
+  answerButtons.forEach((btn) => {
+    btn.disabled = true;
+  });
 });
 
 socket.on('room:closed', ({ message }) => {
-  modeEl.textContent = 'Room closed';
-  taskEl.textContent = message;
-  sendBtn.disabled = true;
+  questionEl.textContent = message;
+  answerButtons.forEach((btn) => {
+    btn.disabled = true;
+  });
 });

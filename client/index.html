@@ -1,32 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Veselinka TV</title>
+    <title>Веселинка ТВ</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="page">
-      <section class="card">
-        <h1>Veselinka TV</h1>
-        <p class="small">Players join on phone using room code or QR.</p>
-        <div>Room code:</div>
+      <section class="card tv-card">
+        <h1>Веселинка</h1>
+        <p class="small">Подключайтесь с телефона по коду комнаты</p>
+
+        <div>Код комнаты:</div>
         <div id="roomCode" class="room-code">----</div>
         <p id="joinUrl" class="small"></p>
-        <div id="lobbyPanel">
-          <h3>Players</h3>
-          <div id="players" class="players"></div>
-          <button id="startBtn" disabled>Start game</button>
+
+        <h2>Игроки</h2>
+        <div id="players" class="players"></div>
+
+        <div id="categoryPanel" class="category-panel">
+          <h2>Выберите категорию</h2>
+          <div class="category-grid" id="categoryGrid">
+            <button class="category-btn" data-category="Кино">Кино</button>
+            <button class="category-btn" data-category="Игры">Игры</button>
+            <button class="category-btn" data-category="Мультфильмы">Мультфильмы</button>
+            <button class="category-btn" data-category="Техника">Техника</button>
+            <button class="category-btn" data-category="Мир животных">Мир животных</button>
+            <button class="category-btn" data-category="Про любовь">Про любовь</button>
+          </div>
         </div>
-        <div id="roundPanel" class="hidden">
-          <h2 id="roundTitle"></h2>
-          <div id="prompt" class="prompt"></div>
-          <p id="progress" class="small"></p>
-        </div>
-        <div id="resultsPanel" class="hidden">
-          <h2>Results</h2>
-          <ul id="results" class="list"></ul>
+
+        <div id="questionPanel" class="hidden">
+          <h2 id="categoryTitle"></h2>
+          <div id="questionText" class="prompt"></div>
+          <ol id="optionsList" class="options-list"></ol>
+          <p id="timer" class="timer"></p>
+          <p id="result" class="result"></p>
         </div>
       </section>
     </main>
