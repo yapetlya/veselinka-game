@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Веселинка Мобайл</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <h1>Подключение</h1>
+
+        <div id="joinPanel">
+          <input id="roomInput" maxlength="4" placeholder="Код комнаты" />
+          <input id="nameInput" maxlength="24" placeholder="Ник" />
+          <button id="joinBtn">Войти</button>
+          <p id="joinError" class="small"></p>
+        </div>
+
+        <div id="gamePanel" class="hidden">
+          <p id="status" class="small"></p>
+          <h2 id="category"></h2>
+          <div id="question" class="prompt">Ждём вопрос...</div>
+          <p id="timer" class="timer"></p>
+          <div id="answers" class="answer-grid hidden">
+            <button class="answer-btn" data-index="0">A</button>
+            <button class="answer-btn" data-index="1">B</button>
+            <button class="answer-btn" data-index="2">C</button>
+            <button class="answer-btn" data-index="3">D</button>
+          </div>
+          <p id="result" class="small"></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
