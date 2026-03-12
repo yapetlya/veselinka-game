@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Veselinka TV</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <h1>Veselinka TV</h1>
+        <p class="small">Players join on phone using room code or QR.</p>
+        <div>Room code:</div>
+        <div id="roomCode" class="room-code">----</div>
+        <p id="joinUrl" class="small"></p>
+        <div id="lobbyPanel">
+          <h3>Players</h3>
+          <div id="players" class="players"></div>
+          <button id="startBtn" disabled>Start game</button>
+        </div>
+        <div id="roundPanel" class="hidden">
+          <h2 id="roundTitle"></h2>
+          <div id="prompt" class="prompt"></div>
+          <p id="progress" class="small"></p>
+        </div>
+        <div id="resultsPanel" class="hidden">
+          <h2>Results</h2>
+          <ul id="results" class="list"></ul>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

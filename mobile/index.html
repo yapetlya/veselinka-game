@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Veselinka Mobile</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <h1>Join Veselinka</h1>
+
+        <div id="joinPanel">
+          <input id="roomInput" maxlength="4" placeholder="Room code" />
+          <input id="nameInput" maxlength="24" placeholder="Nickname" />
+          <button id="joinBtn">Join room</button>
+          <p id="joinError" class="small"></p>
+        </div>
+
+        <div id="gamePanel" class="hidden">
+          <p id="status" class="small"></p>
+          <h2 id="mode"></h2>
+          <div id="task" class="prompt"></div>
+          <input id="answerInput" maxlength="180" placeholder="Type your answer" />
+          <button id="sendBtn">Send</button>
+          <p id="sentState" class="small"></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
